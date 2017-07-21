@@ -11,14 +11,14 @@ def read(fname):
 
 setup(
     name = "superdog",
-    version = "0.1.0",
+    version = "0.1.1",
     author = "Choonho Son",
     author_email = "choonho.son@gmail.com",
     description = ("Intelligent Chat Bot based on Slack"),
     license = "BSD",
     keywords = "chatbot slack",
     url = "https://github.com/pyengine/superdog",
-    packages=['superdog','superdog.plugin', ],
+    packages=['superdog','superdog.plugins', ],
     long_description=read('README.md'),
     classifiers=[
         "Topic :: Utilities",

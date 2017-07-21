@@ -1,6 +1,12 @@
 import sys
+import os.path, pkgutil
+
 
 from slackclient import SlackClient
+
+import plugins
+from plugins.echo import Echo
+from plugins.bithumb import Bithumb
 
 logger = None
 
@@ -36,8 +42,27 @@ class SuperDog:
                 logger.debug("ch:%s" % ch)
                 logger.debug("cmd:%s" % cmd)
                 logger.debug("###########################")
-                res = cmd.upper()
+                if cmd[0] == "?":
+                    res = self.showHelp()
+                else:
+                    res = "I can't understand your request!"
+                    echo = Bithumb(self.client, ch)
+                    echo.run()
                 self.client.api_call("chat.postMessage",channel=ch,text=res,as_user=True)
+
+    def showHelp(self):
+        msg = """I can help you!
+  Supported plugins
+"""
+        plugin_path = os.path.dirname(plugins.__file__)
+        try:
+            for (a,name,b) in pkgutil.iter_modules([plugin_path]):
+                if name == "plugin":
+                    continue
+                msg = msg + "    - %s\n" % name
+        except:
+            msg = msg + "    Failed to load plugins\n"
+        return msg
 
     def parseCmd(self, msg):
         if msg == None:
@@ -57,7 +82,7 @@ class SuperDog:
                 else:
                     # return text after the @ mention, whitespace removed
                     #req = output['text'].split(self.at_bot)[1].strip()
-                    req = output['text']
+                    req = output['text'].split(" ")
                     channel = output['channel']
                     return (req, channel)
             else:
